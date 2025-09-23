@@ -4,9 +4,16 @@ import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { db } from '@/server/db';
 
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
-  
+// Context type for both API routes and App Router
+type Context = {
+  db: typeof db;
+  user: null | { id: string; email: string };
+  req?: CreateNextContextOptions['req'];
+  res?: CreateNextContextOptions['res'];
+};
+
+// For API routes (if needed in the future)
+export const createTRPCContext = async (opts?: CreateNextContextOptions): Promise<Context> => {
   // Get the session from the cookie or header
   // For now, we'll have a null user (anonymous access)
   // Later we'll add authentication
@@ -15,8 +22,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   return {
     db,
     user,
-    req,
-    res,
+    req: opts?.req,
+    res: opts?.res,
   };
 };
 

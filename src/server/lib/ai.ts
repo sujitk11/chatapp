@@ -74,18 +74,20 @@ export async function generateAIResponse({
       content: text,
       tokens: estimatedTokens,
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Gemini API Error:', error);
     
     // Handle specific Gemini errors
-    if (error.message?.includes('API key not valid')) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    if (errorMessage?.includes('API key not valid')) {
       return {
         content: "The Gemini API key is not configured correctly. Please add your API key from Google AI Studio (makersuite.google.com) to continue.",
         tokens: 0,
       };
     }
     
-    if (error.message?.includes('quota')) {
+    if (errorMessage?.includes('quota')) {
       return {
         content: "The AI service has reached its usage limit. Please try again later or check your Google AI Studio quota.",
         tokens: 0,

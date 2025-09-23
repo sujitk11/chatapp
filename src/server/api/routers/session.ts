@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
-import { chatSessions, messages } from '@/server/db/schema';
-import { eq, desc, and, sql } from 'drizzle-orm';
+import { chatSessions } from '@/server/db/schema';
+import { eq, desc, sql, isNull } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 export const sessionRouter = createTRPCRouter({
@@ -37,7 +37,7 @@ export const sessionRouter = createTRPCRouter({
         .where(
           input.userId 
             ? eq(chatSessions.userId, input.userId)
-            : eq(chatSessions.userId, null)
+            : isNull(chatSessions.userId)
         )
         .orderBy(desc(chatSessions.updatedAt))
         .limit(input.limit)
@@ -45,12 +45,12 @@ export const sessionRouter = createTRPCRouter({
 
       // Get total count for pagination
       const [{ count }] = await ctx.db
-        .select({ count: sql`count(*)::int` })
+        .select({ count: sql<number>`count(*)::int` })
         .from(chatSessions)
         .where(
           input.userId 
             ? eq(chatSessions.userId, input.userId)
-            : eq(chatSessions.userId, null)
+            : isNull(chatSessions.userId)
         );
 
       return {

@@ -64,7 +64,7 @@ export const chatRouter = createTRPCRouter({
           .returning();
 
         // Update session's updatedAt and title if it's the first real message
-        const updates: any = { updatedAt: new Date() };
+        const updates: { updatedAt: Date; title?: string } = { updatedAt: new Date() };
         
         // Generate better title from first message
         if (session.messages.length === 0 && (session.title === 'New Career Consultation' || session.title === 'Career Consultation')) {
@@ -84,7 +84,7 @@ export const chatRouter = createTRPCRouter({
         console.error('AI Response Error:', error);
         
         // Save error message
-        const [errorMessage] = await ctx.db
+        await ctx.db
           .insert(messages)
           .values({
             sessionId: input.sessionId,
@@ -106,7 +106,7 @@ export const chatRouter = createTRPCRouter({
       sessionId: z.string().uuid(),
       message: z.string().min(1),
     }))
-    .subscription(async function* ({ ctx, input }) {
+    .subscription(async function* () {
       // This is a placeholder for streaming implementation
       // We'll implement this later if needed
       yield { type: 'start' as const };

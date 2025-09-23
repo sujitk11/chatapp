@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { ChatInterface } from '@/components/chat/ChatInterface';
 import { SessionList } from '@/components/chat/SessionList';
 import { api } from '@/app/providers';
-import { generateSessionId } from '@/lib/utils';
 
 export default function HomePage() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -55,6 +54,7 @@ export default function HomePage() {
     if (sessions.length === 0 && !createSession.isPending) {
       handleNewSession();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessions]);
 
   const handleNewSession = () => {
