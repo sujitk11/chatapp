@@ -41,6 +41,8 @@ export const chatSessions = pgTable('chat_sessions', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, (table) => ({
   userIdIdx: index('sessions_user_id_idx').on(table.userId),
+  createdAtIdx: index('sessions_created_at_idx').on(table.createdAt),
+  updatedAtIdx: index('sessions_updated_at_idx').on(table.updatedAt),
 }));
 
 // Messages
