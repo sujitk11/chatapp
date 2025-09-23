@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageItem } from './MessageItem';
 import { type Message } from '@/server/db/schema';
+import { Bot } from 'lucide-react';
 
 interface MessageListProps {
   messages: Message[];
@@ -42,11 +43,17 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
         {isLoading && (
           <div className="flex gap-3 p-4">
             <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-              <div className="w-4 h-4 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+              <Bot className="w-4 h-4" />
             </div>
-            <div className="flex-1 space-y-2 pt-1">
-              <div className="h-2 w-24 bg-muted rounded animate-pulse" />
-              <div className="h-2 w-32 bg-muted rounded animate-pulse" />
+            <div className="flex-1 pt-1">
+              <div className="inline-flex items-center gap-1">
+                <span className="text-sm text-muted-foreground">Career Counselor is typing</span>
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
             </div>
           </div>
         )}

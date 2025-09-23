@@ -1,15 +1,16 @@
 'use client';
 
 import { cn, formatDate } from '@/lib/utils';
-import { User, Bot } from 'lucide-react';
+import { User, Bot, Check, CheckCheck } from 'lucide-react';
 
 interface MessageItemProps {
   role: 'user' | 'assistant' | 'system';
   content: string;
   createdAt: Date | string;
+  status?: 'sending' | 'sent' | 'delivered';
 }
 
-export function MessageItem({ role, content, createdAt }: MessageItemProps) {
+export function MessageItem({ role, content, createdAt, status = 'delivered' }: MessageItemProps) {
   const isUser = role === 'user';
 
   return (
@@ -30,6 +31,13 @@ export function MessageItem({ role, content, createdAt }: MessageItemProps) {
           <span className="text-xs text-muted-foreground">
             {formatDate(createdAt)}
           </span>
+          {isUser && (
+            <span className="text-xs text-muted-foreground">
+              {status === 'sending' && '• Sending...'}
+              {status === 'sent' && <Check className="inline w-3 h-3" />}
+              {status === 'delivered' && <CheckCheck className="inline w-3 h-3" />}
+            </span>
+          )}
         </div>
         <div className="text-sm whitespace-pre-wrap">{content}</div>
       </div>

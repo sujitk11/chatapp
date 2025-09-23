@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { chatSessions, messages } from '@/server/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 export const sessionRouter = createTRPCRouter({
@@ -23,10 +23,12 @@ export const sessionRouter = createTRPCRouter({
       return session;
     }),
 
-  // Get all sessions for a user (or anonymous)
+  // Get all sessions for a user (or anonymous) with pagination
   list: publicProcedure
     .input(z.object({
       userId: z.string().uuid().optional(),
+      limit: z.number().min(1).max(50).default(20),
+      offset: z.number().min(0).default(0),
     }))
     .query(async ({ ctx, input }) => {
       const sessions = await ctx.db
@@ -37,9 +39,25 @@ export const sessionRouter = createTRPCRouter({
             ? eq(chatSessions.userId, input.userId)
             : eq(chatSessions.userId, null)
         )
-        .orderBy(desc(chatSessions.updatedAt));
+        .orderBy(desc(chatSessions.updatedAt))
+        .limit(input.limit)
+        .offset(input.offset);
 
-      return sessions;
+      // Get total count for pagination
+      const [{ count }] = await ctx.db
+        .select({ count: sql`count(*)::int` })
+        .from(chatSessions)
+        .where(
+          input.userId 
+            ? eq(chatSessions.userId, input.userId)
+            : eq(chatSessions.userId, null)
+        );
+
+      return {
+        sessions,
+        total: count,
+        hasMore: input.offset + input.limit < count,
+      };
     }),
 
   // Get a single session with messages

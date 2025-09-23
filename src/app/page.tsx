@@ -9,10 +9,14 @@ import { generateSessionId } from '@/lib/utils';
 export default function HomePage() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
-  // Fetch sessions
-  const { data: sessions = [], refetch: refetchSessions } = api.session.list.useQuery({
+  // Fetch sessions with pagination
+  const { data: sessionData, refetch: refetchSessions } = api.session.list.useQuery({
     userId: undefined, // Anonymous for now
+    limit: 20,
+    offset: 0,
   });
+  
+  const sessions = sessionData?.sessions || [];
 
   // Fetch active session with messages
   const { data: activeSession, refetch: refetchMessages } = api.session.getById.useQuery(

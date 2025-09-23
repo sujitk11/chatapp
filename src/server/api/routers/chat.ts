@@ -3,7 +3,7 @@ import { createTRPCRouter, publicProcedure } from '../trpc';
 import { messages, chatSessions } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
-import { generateAIResponse } from '@/server/lib/ai';
+import { generateAIResponse, generateSessionTitle } from '@/server/lib/ai';
 
 export const chatRouter = createTRPCRouter({
   // Send a message and get AI response
@@ -63,10 +63,17 @@ export const chatRouter = createTRPCRouter({
           })
           .returning();
 
-        // Update session's updatedAt
+        // Update session's updatedAt and title if it's the first real message
+        const updates: any = { updatedAt: new Date() };
+        
+        // Generate better title from first message
+        if (session.messages.length === 0 && (session.title === 'New Career Consultation' || session.title === 'Career Consultation')) {
+          updates.title = await generateSessionTitle(input.message);
+        }
+        
         await ctx.db
           .update(chatSessions)
-          .set({ updatedAt: new Date() })
+          .set(updates)
           .where(eq(chatSessions.id, input.sessionId));
 
         return {
