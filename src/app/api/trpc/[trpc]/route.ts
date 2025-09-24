@@ -2,14 +2,17 @@ import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { type NextRequest } from 'next/server';
 import { appRouter } from '@/server/api/root';
 import { db } from '@/server/db';
+import { getSession } from '@/lib/auth';
 
 // Create context for App Router
 const createContext = async () => {
-  // For App Router, we create a simplified context
-  // Authentication will be handled separately if needed
+  // Get the session from the cookie
+  const session = await getSession();
+  const user = session ? { id: session.userId, email: session.email } : null;
+  
   return {
     db,
-    user: null,
+    user,
   };
 };
 

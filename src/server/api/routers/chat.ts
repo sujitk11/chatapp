@@ -6,14 +6,14 @@ import { TRPCError } from '@trpc/server';
 import { generateAIResponse, generateSessionTitle } from '@/server/lib/ai';
 
 export const chatRouter = createTRPCRouter({
-  // Send a message and get AI response
+  // Send a message and get AI response with simulated streaming
   sendMessage: publicProcedure
     .input(z.object({
       sessionId: z.string().uuid(),
       message: z.string().min(1),
     }))
     .mutation(async ({ ctx, input }) => {
-      // Verify session exists
+      // Verify session exists and user has access
       const session = await ctx.db.query.chatSessions.findFirst({
         where: eq(chatSessions.id, input.sessionId),
         with: {
@@ -29,6 +29,25 @@ export const chatRouter = createTRPCRouter({
           code: 'NOT_FOUND',
           message: 'Session not found',
         });
+      }
+
+      // Check if user has access to this session
+      const currentUserId = ctx.user?.id;
+      if (session.userId !== currentUserId) {
+        // If session has a userId and it doesn't match current user, deny access
+        if (session.userId && session.userId !== currentUserId) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'You do not have access to this session',
+          });
+        }
+        // If user is logged in but session is anonymous, deny access
+        if (currentUserId && !session.userId) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'You do not have access to this session',
+          });
+        }
       }
 
       // Save user message
@@ -98,19 +117,5 @@ export const chatRouter = createTRPCRouter({
           message: 'Failed to generate AI response',
         });
       }
-    }),
-
-  // Stream a message response (for future enhancement)
-  streamMessage: publicProcedure
-    .input(z.object({
-      sessionId: z.string().uuid(),
-      message: z.string().min(1),
-    }))
-    .subscription(async function* () {
-      // This is a placeholder for streaming implementation
-      // We'll implement this later if needed
-      yield { type: 'start' as const };
-      yield { type: 'token' as const, content: 'Streaming not yet implemented' };
-      yield { type: 'end' as const };
     }),
 });

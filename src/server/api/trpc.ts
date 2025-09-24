@@ -14,10 +14,12 @@ type Context = {
 
 // For API routes (if needed in the future)
 export const createTRPCContext = async (opts?: CreateNextContextOptions): Promise<Context> => {
-  // Get the session from the cookie or header
-  // For now, we'll have a null user (anonymous access)
-  // Later we'll add authentication
-  const user = null;
+  // Dynamic import to avoid circular dependency
+  const { getSession } = await import('@/lib/auth');
+  
+  // Get the session from the cookie
+  const session = await getSession();
+  const user = session ? { id: session.userId, email: session.email } : null;
 
   return {
     db,
