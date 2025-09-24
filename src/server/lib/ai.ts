@@ -30,7 +30,6 @@ export async function generateAIResponse({
   sessionContext,
 }: GenerateAIResponseParams) {
   try {
-    // Get the model
     const model = genAI.getGenerativeModel({ 
       model: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
     });
