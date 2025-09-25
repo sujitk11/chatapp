@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { cn, formatDate } from '@/lib/utils';
 import { User, Bot, Check, CheckCheck } from 'lucide-react';
 
@@ -8,10 +9,20 @@ interface MessageItemProps {
   content: string;
   createdAt: Date | string;
   status?: 'sending' | 'sent' | 'delivered';
+  isStreaming?: boolean;
+  isLastMessage?: boolean;
 }
 
-export function MessageItem({ role, content, createdAt, status = 'delivered' }: MessageItemProps) {
+export const MessageItem = memo(function MessageItem({ 
+  role, 
+  content, 
+  createdAt, 
+  status = 'delivered',
+  isStreaming = false,
+  isLastMessage = false
+}: MessageItemProps) {
   const isUser = role === 'user';
+  const isAssistant = role === 'assistant';
 
   return (
     <div className={cn('flex gap-3 p-4', isUser ? 'bg-muted/50' : '')}>
@@ -39,8 +50,13 @@ export function MessageItem({ role, content, createdAt, status = 'delivered' }: 
             </span>
           )}
         </div>
-        <div className="text-sm whitespace-pre-wrap">{content}</div>
+        <div className="text-sm whitespace-pre-wrap">
+          {content}
+          {isStreaming && isAssistant && isLastMessage && (
+            <span className="inline-block w-1 h-4 bg-foreground ml-0.5 animate-pulse align-middle" />
+          )}
+        </div>
       </div>
     </div>
   );
-}
+});

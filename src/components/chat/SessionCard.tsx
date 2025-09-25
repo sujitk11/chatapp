@@ -1,8 +1,7 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
-import { MessageCircle, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SessionCardProps {
@@ -26,46 +25,48 @@ export function SessionCard({
   isActive
 }: SessionCardProps) {
   return (
-    <Card 
-      className={`cursor-pointer transition-colors hover:bg-muted/50 ${isActive ? 'border-primary' : ''}`}
+    <div 
+      className={`
+        group relative cursor-pointer rounded-lg px-3 py-2.5
+        transition-all duration-200
+        ${isActive 
+          ? 'bg-accent text-accent-foreground' 
+          : 'hover:bg-accent/50'
+        }
+      `}
       onClick={onClick}
     >
-      <CardHeader className="p-4">
-        <div className="flex justify-between items-start">
-          <div className="flex-1 space-y-1">
-            <CardTitle className="text-sm font-medium line-clamp-1">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className={`text-sm font-medium truncate ${isActive ? 'font-semibold' : ''}`}>
               {title}
-            </CardTitle>
-            {summary && (
-              <CardDescription className="text-xs line-clamp-2">
-                {summary}
-              </CardDescription>
+            </h3>
+            {onDelete && (
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity -mr-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
             )}
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span>{formatDate(updatedAt)}</span>
-              {messageCount !== undefined && (
-                <span className="flex items-center gap-1">
-                  <MessageCircle className="w-3 h-3" />
-                  {messageCount}
-                </span>
-              )}
-            </div>
           </div>
-          {onDelete && (
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-6 w-6"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete();
-              }}
-            >
-              <Trash2 className="h-3 w-3" />
-            </Button>
-          )}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>{formatDate(updatedAt)}</span>
+            {messageCount !== undefined && (
+              <>
+                <span>•</span>
+                <span>{messageCount} messages</span>
+              </>
+            )}
+          </div>
         </div>
-      </CardHeader>
-    </Card>
+      </div>
+    </div>
   );
 }
