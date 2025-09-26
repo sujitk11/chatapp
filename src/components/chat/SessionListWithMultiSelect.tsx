@@ -165,7 +165,7 @@ export function SessionList({
             {sessions.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <p className="text-sm text-muted-foreground">No conversations yet</p>
-                <p className="text-xs text-muted-foreground mt-1">Click "New Chat" to start</p>
+                <p className="text-xs text-muted-foreground mt-1">Click &quot;New Chat&quot; to start</p>
               </div>
             ) : (
               <div className="px-2 space-y-1">

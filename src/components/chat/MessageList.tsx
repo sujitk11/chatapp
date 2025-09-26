@@ -15,7 +15,7 @@ interface MessageListProps {
   onSuggestionClick?: (suggestion: string) => void;
 }
 
-export function MessageList({ messages, isLoading, isStreaming, pendingMessageId, onSuggestionClick }: MessageListProps) {
+export function MessageList({ messages, isLoading, isStreaming, onSuggestionClick }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when messages change or loader appears
@@ -38,7 +38,7 @@ export function MessageList({ messages, isLoading, isStreaming, pendingMessageId
             <div className="space-y-2">
               <h3 className="text-2xl font-semibold">How can I help you today?</h3>
               <p className="text-muted-foreground">
-                I'm here to assist with your career journey
+                I&apos;m here to assist with your career journey
               </p>
             </div>
           </div>
@@ -47,7 +47,7 @@ export function MessageList({ messages, isLoading, isStreaming, pendingMessageId
             <p className="text-sm text-muted-foreground text-center font-medium">Try asking about:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl mx-auto">
               <button 
-                onClick={() => onSuggestionClick?.('I\'m thinking about changing careers. What should I consider?')}
+                onClick={() => onSuggestionClick?.('I am thinking about changing careers. What should I consider?')}
                 className="text-left p-4 rounded-xl border border-border/50 bg-card/50 hover:bg-accent/50 hover:border-border transition-all group">
                 <div className="flex items-start gap-3">
                   <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">

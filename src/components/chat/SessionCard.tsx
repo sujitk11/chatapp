@@ -17,7 +17,6 @@ interface SessionCardProps {
 
 export function SessionCard({
   title,
-  summary,
   updatedAt,
   messageCount,
   onClick,

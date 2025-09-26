@@ -1,13 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { api } from '@/app/providers';
 import { User, LogOut } from 'lucide-react';
 
 export function Header() {
-  const router = useRouter();
   const { data: user } = api.auth.me.useQuery();
   
   const utils = api.useUtils();

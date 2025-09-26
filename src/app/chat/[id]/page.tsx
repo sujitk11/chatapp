@@ -1,12 +1,11 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 import HomePage from '@/app/page';
 
 export default function ChatPage() {
   const params = useParams();
-  const router = useRouter();
   const chatId = params.id as string;
 
   // Store the chat ID in localStorage for the main component to use

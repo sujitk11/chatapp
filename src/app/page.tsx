@@ -26,7 +26,7 @@ export default function HomePage({ urlChatId }: HomePageProps) {
   const skipSyncRef = useRef(false);
 
   // Get current user
-  const { data: currentUser, isLoading: userLoading, dataUpdatedAt: userDataUpdatedAt } = api.auth.me.useQuery();
+  const { data: currentUser, isLoading: userLoading } = api.auth.me.useQuery();
 
   // Track previous user to detect changes
   const prevUserRef = useRef<string | null | undefined>(undefined);
@@ -42,8 +42,7 @@ export default function HomePage({ urlChatId }: HomePageProps) {
       enabled: !userLoading, // Only fetch sessions after user loading is done
       refetchOnMount: 'always',
       refetchOnWindowFocus: true,
-      staleTime: 0, // Always consider data stale
-      cacheTime: 0, // Don't cache
+      staleTime: 0 // Always consider data stale
     }
   );
   
@@ -66,7 +65,7 @@ export default function HomePage({ urlChatId }: HomePageProps) {
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(activeSessionId);
 
   // Fetch active session messages - skip if no valid session ID
-  const { data: activeSession, refetch: refetchMessages } = api.session.getById.useQuery(
+  const { data: activeSession } = api.session.getById.useQuery(
     { id: activeSessionId || '' },
     { 
       enabled: Boolean(isValidUUID && activeSessionId),
@@ -100,7 +99,6 @@ export default function HomePage({ urlChatId }: HomePageProps) {
         role: 'user',
         content: message,
         createdAt: new Date(),
-        updatedAt: new Date(),
         tokens: null,
       };
       
@@ -301,7 +299,7 @@ export default function HomePage({ urlChatId }: HomePageProps) {
       // Clear invalid session from localStorage
       localStorage.removeItem('activeSessionId');
     }
-  }, [urlChatId, pathname, sessions, router, userLoading]);
+  }, [urlChatId, pathname, sessions, router, userLoading, sessionData, createSession.isPending]);
 
   // Update localStorage when active session changes
   useEffect(() => {
